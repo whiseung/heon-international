@@ -35,6 +35,23 @@ document.addEventListener('click', (event) => {
 });
 window.matchMedia('(max-width: 800px)').addEventListener('change', () => setMenu(false));
 
+// Track record: dies and tool units light up once, when the figures scroll into view.
+const record = document.querySelector('.record');
+if (record) {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    record.classList.add('is-lit');
+  } else {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        record.classList.add('is-lit');
+        observer.disconnect();
+      }
+    }, { threshold: 0.3 });
+    observer.observe(record.querySelector('.record-grid'));
+  }
+}
+
 languageLink.addEventListener('click', () => {
   const translated = new URL(languageLink.href);
   const current = new URL(window.location.href);
